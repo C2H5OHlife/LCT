@@ -39,7 +39,7 @@ function [positions, time] = tracker_lct(video_path, img_files, pos, target_sz, 
 	positions = zeros(numel(img_files), 4);  %to calculate precision
     
     svm_struct=[];
-    
+    ferns=[];
     
     nScales=33; %³ß¶ÈÊýÁ¿
     scale_sigma_factor=1/4;
@@ -103,7 +103,7 @@ function [positions, time] = tracker_lct(video_path, img_files, pos, target_sz, 
             config.max_response=max_response;
             
             if max_response<config.motion_thresh,  
-                [pos, max_response]=refine_pos_rf(im, pos, svm_struct, app_model, config);           
+                [pos, max_response]=refine_pos_rf(im, pos, ferns, app_model, config);           
             end
             
             
@@ -158,7 +158,8 @@ function [positions, time] = tracker_lct(video_path, img_files, pos, target_sz, 
             app_model.xf=app_xf; 
             app_model.alphaf=app_alphaf;
             
-            svm_struct=det_learn(im, pos, window_sz, config.detc, []); %¼ì²âÆ÷
+%           svm_struct=det_learn(im, pos, window_sz, config.detc, []); %¼ì²âÆ÷
+            ferns=det_learn(im, pos, window_sz, config.detc, []); %ÖØ¼ì²âÆ÷ÑµÁ·
             
             sf_den = new_sf_den;
             sf_num = new_sf_num;
@@ -176,7 +177,7 @@ function [positions, time] = tracker_lct(video_path, img_files, pos, target_sz, 
                 app_model.alphaf=(1 - interp_factor) * app_model.alphaf + interp_factor * app_alphaf;
                 app_model.xf=(1 - interp_factor) * app_model.xf + interp_factor * app_xf;
                 
-                svm_struct=det_learn(im, pos, window_sz, config.detc, svm_struct);
+                ferns=det_learn(im, pos, window_sz, config.detc, ferns);
             end
         end
             

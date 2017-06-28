@@ -1,42 +1,42 @@
-
-
-function [ svm_struct ] = det_learn( im, pos, window_sz, det_config, svm_struct )
+function [ ferns ] = det_learn( im, pos, window_sz, det_config, ferns )
+%function [ svm_struct ] = det_learn( im, pos, window_sz, det_config, svm_struct )
 %
-[feat, ~, labels]=det_samples(im, pos, window_sz, det_config);
-
+[feat, ~, labels]=det_samples(im, pos, window_sz, det_config); %采集特征，一列一个样本
+% 
 idx_p=labels>0.9;
 idx_n=labels<0.5;
 
-feat=feat(:, idx_p|idx_n);
+feat=feat(:, idx_p|idx_n); %去掉不可信的样本
 
-% feat=feat';
+%feat=feat'; %转置成一行一个样本 因为下面用pdollar那个函数时按行存储样本
 
 labels(idx_p)=1;
-labels(idx_n)=-1;
+% labels(idx_n)=-1;
+labels(idx_n)=2;
 labels=labels(idx_p|idx_n);
 
-% labels=(labels>0.5);
+% % labels=(labels>0.5);
 
-if isempty(svm_struct)
-%     [feat, labels]=update_support_vector(feat, labels, svm_struct);
-%     labels=[labels; svm_struct.GroupNames(svm_struct.SupportVectorIndices)];  
+% if isempty(svm_struct)
+% %     [feat, labels]=update_support_vector(feat, labels, svm_struct);
+% %     labels=[labels; svm_struct.GroupNames(svm_struct.SupportVectorIndices)];  
 
-[svm_struct.w, svm_struct.b]= vl_svmtrain(feat, labels, 0.5) ;
+% [svm_struct.w, svm_struct.b]= vl_svmtrain(feat, labels, 0.5) ;
 
-else  
-    svm_struct.w = onlineSVMTrain(feat', labels, 0.5, svm_struct.w);   
-end
+% else  
+%     svm_struct.w = onlineSVMTrain(feat', labels, 0.5, svm_struct.w);   
+% end
 
 %随机蕨部分
-% xs0=feat(:,labels>det_config.thresh_p); %正负样本吧
-% hs0=feat(:,labels<det_config.thresh_n);
-% 
-% if isempty(ferns)
-%     fernPrm=struct('S',8,'M',50,'thrr',[-1 1],'bayes',1);
-% else
-%     fernPrm=struct('S',8,'M',50,'thrr',[0 1],'bayes',1, 'ferns', ferns);
-% end
-% 
+% % xs0=feat(:,labels>det_config.thresh_p); 
+% % hs0=feat(:,labels<det_config.thresh_n);
+
+if isempty(ferns)
+    fernPrm=struct('S',8,'M',50,'thrr',[-1 1],'bayes',1);
+else
+    fernPrm=struct('S',8,'M',50,'thrr',[0 1],'bayes',1, 'ferns', ferns);
+end
+
 % det_config.C=100;
 % 
 % sample_w=labels;
@@ -44,10 +44,10 @@ end
 % sample_w(~labels)=sum(labels==1);
 % 
 % C = max(det_config.C*sample_w/sum(sample_w),0.001);
-% 
-% [ferns,~]=fernsClfTrain(feat',labels,fernPrm);
-% 
-% 
+
+[ferns,~]=fernsClfTrain(feat',labels,fernPrm);
+
+
 % svm_struct=svmtrain(feat,labels,'boxconstraint',C, 'autoscale', 'false');
 
 end

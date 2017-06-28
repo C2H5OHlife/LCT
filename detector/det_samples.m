@@ -2,7 +2,11 @@
 % det using the bb as [x y w d]
 
 function [feat, pos_samples, labels, weights]=det_samples(im, pos, window_sz, det_config)
-
+% OUTPUT
+%  feat -样本特征 按列存储
+%  pos_samples -样本位置（滑动窗口网格坐标）
+%  labels -样本标签
+%  weights -权重
 w_area=get_subwindow(im, pos, floor(window_sz*1.2));
 
 feat=get_feature_detector(w_area, det_config.nbin);
@@ -19,7 +23,7 @@ sz=size(feat);
 
 % step=max(floor(min(t_sz)/4),1);
 
-step=1;
+step=1; %滑动窗口的步长是1个像素
 
 feat=im2colstep(feat, [t_sz(1:2), size(feat,3)], [step, step, size(feat,3)]);
 
