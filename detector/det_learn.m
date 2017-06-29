@@ -3,8 +3,8 @@ function [ ferns ] = det_learn( im, pos, window_sz, det_config, ferns )
 %
 [feat, ~, labels]=det_samples(im, pos, window_sz, det_config); %采集特征，一列一个样本
 % 
-idx_p=labels>0.9;
-idx_n=labels<0.5;
+idx_p=labels>0.5;
+idx_n=labels<0.1;
 
 feat=feat(:, idx_p|idx_n); %去掉不可信的样本
 
@@ -32,9 +32,9 @@ labels=labels(idx_p|idx_n);
 % % hs0=feat(:,labels<det_config.thresh_n);
 
 if isempty(ferns)
-    fernPrm=struct('S',8,'M',50,'thrr',[-1 1],'bayes',1);
+    fernPrm=struct('S',8,'M',50,'thrr',[0 1],'bayes',1);
 else
-    fernPrm=struct('S',8,'M',50,'thrr',[0 1],'bayes',1, 'ferns', ferns);
+    fernPrm=struct('S',8,'M',50,'thrr',[-1 1],'bayes',1, 'ferns', ferns);
 end
 
 % det_config.C=100;

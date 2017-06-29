@@ -1,5 +1,5 @@
-function [pos, max_response]=refine_pos_rf(im, pos, svm_struct, app_model, config)
-
+function [pos, max_response]=refine_pos_rf(im, pos, ferns, app_model, config)
+% function [pos, max_response]=refine_pos_rf(im, pos, svm_struct, app_model, config)
 max_response=config.max_response;
 
 window_sz=config.window_sz;
@@ -11,12 +11,18 @@ app_sz=config.app_sz;
 
 [feat, pos_samples, ~, weights]=det_samples(im, pos, window_sz, config.detc);
 
-% 应用suiji
-% [hs,probs] = fernsClfApply( feat', ferns);
+% 应用随机蕨
+[hs,probs] = fernsClfApply( feat', ferns);
 
-scores=svm_struct.w'*feat+svm_struct.b;
+% scores=svm_struct.w'*feat+svm_struct.b;
+% 
+% scores=scores.*reshape(weights,1,[]);
 
-scores=scores.*reshape(weights,1,[]);
+% DIY
+for i = 1:size(hs,1)
+    index = find(porbs(:,1)==max(probs(:,1)))
+end
+
 
 tpos=round(pos_samples(:, find(scores==max(scores),1)));
 
