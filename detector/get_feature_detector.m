@@ -23,7 +23,7 @@ for ii=1:size(f_chn,3)
     
     t_chn=f_chn(:,:,ii);
     t_chn=t_chn(:,:,ones(1,nth));
-    t_chn=bsxfun(@gt, t_chn, reshape(thr, 1, 1, nth));    
+    t_chn=bsxfun(@gt, t_chn, reshape(thr, 1, 1, nth)); % greater than
     feat(:,:,(ii-1)*nth+1:ii*nth)=t_chn;
 end
 
