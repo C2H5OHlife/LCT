@@ -4,7 +4,7 @@ function [ ferns ] = det_learn( im, pos, window_sz, det_config, ferns )
 [feat, ~, labels]=det_samples(im, pos, window_sz, det_config); %采集特征，一列一个样本
 % 
 idx_p=labels>0.5;
-idx_n=labels<0.1;
+idx_n=labels<0.5;
 
 feat=feat(:, idx_p|idx_n); %去掉不可信的样本
 

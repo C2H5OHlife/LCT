@@ -7,6 +7,8 @@ function [feat, pos_samples, labels, weights]=det_samples(im, pos, window_sz, de
 %  pos_samples -样本位置（滑动窗口网格坐标）
 %  labels -样本标签
 %  weights -权重
+
+%窗口大小1.2倍作为搜索区域
 w_area=get_subwindow(im, pos, floor(window_sz*1.2));
 
 feat=get_feature_detector(w_area, det_config.nbin);
@@ -26,7 +28,7 @@ sz=size(feat);
 step=1; %滑动窗口的步长是1个像素
 
 feat=im2colstep(feat, [t_sz(1:2), size(feat,3)], [step, step, size(feat,3)]);
-
+%将feat按矩阵块划分，排列成一列一列（相当于得到了很多）
 [xx, yy]=meshgrid(1:step:sz(2)-t_sz(2)+1,1:step:sz(1)-t_sz(1)+1);
 
 weights=fspecial('gaussian',size(xx), 25);
